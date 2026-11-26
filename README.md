@@ -11,6 +11,7 @@ My resume as a serverless website on AWS, with a live visitor counter backed by 
 ![DynamoDB](https://img.shields.io/badge/DynamoDB-4053D6?logo=amazondynamodb&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?logo=postman&logoColor=white)
 
 ---
 
@@ -26,6 +27,7 @@ This repository holds my implementation on AWS:
 - served on a **custom domain** through **Amazon Route 53**
 - a **visitor counter** in **JavaScript** that calls a **Python AWS Lambda** function, which stores the count in **Amazon DynamoDB**
 - access controlled with an **IAM** role for the Lambda function
+- the API tested with **Postman** before connecting it to the website
 
 ---
 
@@ -62,6 +64,7 @@ This repository holds my implementation on AWS:
 | Back end | AWS Lambda (Python 3, boto3) | Reads and updates the visitor count |
 | Database | Amazon DynamoDB (on-demand) | Stores the visitor count |
 | Security | AWS IAM | Execution role with least-privilege DynamoDB access |
+| API testing | Postman | Sends requests to the Lambda Function URL and checks the responses |
 
 ---
 
@@ -75,8 +78,7 @@ cloud-resume-challenge/
 ├── backend/
 │   └── lambda_function.py    # Python Lambda: increments and returns the count
 ├── docs/
-│   ├── architecture.png      # Architecture diagram (official AWS icons)
-│   └── architecture.svg      # Vector version of the diagram
+│   └── architecture.png      # Architecture diagram (official AWS icons)
 ├── .gitignore
 └── README.md
 ```
@@ -104,10 +106,19 @@ cloud-resume-challenge/
 - Gave the function an **IAM execution role** that can only read and update this table.
 - Turned on a **Lambda Function URL** and configured **CORS** so the website's domain is allowed to call it.
 
-### 6. Visitor counter in JavaScript
+### 6. API testing with Postman
+Before connecting the API to the website, I tested the Lambda Function URL in **Postman**:
+- Sent `GET` requests to the Function URL and checked for a `200 OK` status.
+- Confirmed the response body is valid JSON in the expected format, for example `{"views": 16}`.
+- Sent repeated requests to confirm the count goes up by one each time, which shows the DynamoDB update works.
+- Checked the response headers while troubleshooting CORS.
+
+Testing the API on its own first made it easy to tell back-end problems apart from front-end (JavaScript or CORS) problems.
+
+### 7. Visitor counter in JavaScript
 - Added a script to `index.html` that calls the Function URL on page load and writes the result into the footer.
 
-### 7. Publishing updates
+### 8. Publishing updates
 After changing the website:
 ```bash
 aws s3 sync frontend/ s3://<your-bucket-name>/
